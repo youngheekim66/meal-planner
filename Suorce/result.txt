@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Projects\meal-planner\Suorce\add_japchae_recipe.py", line 83, in <module>
+    main()
+    ~~~~^^
+  File "C:\Projects\meal-planner\Suorce\add_japchae_recipe.py", line 59, in main
+    print("\U0001f35c 잡채 레시피를 식단 플래너에 등록합니다...")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'cp949' codec can't encode character '\U0001f35c' in position 0: illegal multibyte sequence

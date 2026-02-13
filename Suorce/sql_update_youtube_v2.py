@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+import psycopg2
+
+DB_URL = "postgresql://postgres:WIjbfaRGbyRnfKhKCkpRwggjMLRGbsmj@mainline.proxy.rlwy.net:14763/railway"
+
+MAPPING = {
+    1: "https://www.youtube.com/watch?v=xeOv8cZMg2I&t=78s",
+    2: "https://www.youtube.com/watch?v=3enx3GoMffU",
+    3: "https://www.youtube.com/watch?v=Eu1z6ZnrLqw",
+    4: "https://www.youtube.com/watch?v=_8PabBW-c8U&t=239s",
+    5: "https://www.youtube.com/watch?v=rwr7uQSEKSs",
+    6: "https://www.youtube.com/watch?v=IocdgBp7vGc",
+    7: "https://www.youtube.com/watch?v=lNdPbWepmPI",
+    8: "https://www.youtube.com/watch?v=IvaYhpEBexc",
+    9: "https://www.youtube.com/watch?v=sPCjieBk9KE",
+    10: "https://www.youtube.com/watch?v=chnArCaEpqA",
+    11: "https://www.youtube.com/watch?v=hs5sJd9zdO4",
+    12: "https://www.youtube.com/watch?v=ZxIJB8zirnQ",
+    13: "https://www.youtube.com/watch?v=E2csZYObCDU",
+    14: "https://www.youtube.com/watch?v=VrpxGigN9fY",
+    15: "https://www.youtube.com/watch?v=L8Y_vqv_ix8",
+    16: "https://www.youtube.com/watch?v=IenRd9gBWSY",
+    17: "https://www.youtube.com/watch?v=5q-T50K66a4",
+    18: "https://www.youtube.com/watch?v=vqb3WyZmL_8",
+    19: "https://www.youtube.com/watch?v=kAEaoDd5mxo",
+    20: "https://www.youtube.com/watch?v=Wpm8h10wXBQ",
+    21: "https://www.youtube.com/watch?v=Rcf_VUkoF88",
+    22: "https://www.youtube.com/watch?v=yYn6jsPqmZE",
+    23: "https://www.youtube.com/watch?v=yd1WYXyl5_w",
+    24: "https://www.youtube.com/watch?v=MZrksU3hR0M",
+    25: "https://www.youtube.com/watch?v=ugAqimryJ00",
+    26: "https://www.youtube.com/watch?v=11lVLe1vnb0",
+    27: "https://www.youtube.com/watch?v=FKTHO15QutU",
+    28: "https://www.youtube.com/watch?v=O2QMCuYMnpo",
+    29: "https://www.youtube.com/watch?v=wQRRMEqYPeg",
+    30: "https://www.youtube.com/watch?v=sPCjieBk9KE",
+    31: "https://www.youtube.com/watch?v=j0-_vTbLALM",
+    32: "https://www.youtube.com/watch?v=A8R6FE7YtaI",
+    33: "https://www.youtube.com/watch?v=8HycHjpapTY",
+    34: "https://www.youtube.com/watch?v=gUYeEasWU58",
+    35: "https://www.youtube.com/watch?v=2ebjEWk4E4I",
+    36: "https://www.youtube.com/watch?v=sPCjieBk9KE",
+    37: "https://www.youtube.com/watch?v=tD8ApzPsDx8",
+    38: "https://www.youtube.com/watch?v=k6Pzfri444Y",
+    39: "https://www.youtube.com/watch?v=-OWr6ra5Rak",
+    40: "https://www.youtube.com/watch?v=uWlLewIaPOY",
+    41: "https://www.youtube.com/watch?v=dj254ORKR30",
+    42: "https://www.youtube.com/watch?v=9120oxxZE-Y",
+    43: "https://www.youtube.com/watch?v=6hLnQ5c03L8",
+    44: "https://www.youtube.com/watch?v=xiLqt4FUEzc",
+    45: "https://www.youtube.com/watch?v=1Gsfu4OzJLk",
+    46: "https://www.youtube.com/watch?v=oJ8d71UlIsk",
+    47: "https://www.youtube.com/watch?v=BAgkq1Q4kBc",
+    48: "https://www.youtube.com/watch?v=ZYaXo3TZzkk",
+    49: "https://www.youtube.com/watch?v=sVVBjEwq3Rc",
+    50: "https://www.youtube.com/watch?v=I_X_kOy86AE",
+    51: "https://www.youtube.com/watch?v=Rcf_VUkoF88",
+    52: "https://www.youtube.com/watch?v=dzfpaJkr_Q4",
+    53: "https://www.youtube.com/watch?v=w0D2v3ptfbU",
+    54: "https://www.youtube.com/watch?v=3e9hkPMp6fU",
+    55: "https://www.youtube.com/watch?v=ifoV2L0bgT4",
+    56: "https://www.youtube.com/watch?v=xtMICg0KGtI",
+    57: "https://www.youtube.com/watch?v=YPL9zdaftdI",
+    58: "https://www.youtube.com/watch?v=ZyGsvmer55M",
+    59: "https://www.youtube.com/watch?v=ddV0BThx-gw",
+    60: "https://www.youtube.com/watch?v=EMTMscHNDjc",
+    61: "https://www.youtube.com/watch?v=KcFPklUQkjY",
+    62: "https://www.youtube.com/watch?v=t70eGxX-3_Q",
+    63: "https://www.youtube.com/watch?v=hFW82OfiYSQ",
+    64: "https://www.youtube.com/watch?v=yYn6jsPqmZE",
+    65: "https://www.youtube.com/watch?v=c-CUOo1QzyQ",
+    66: "https://www.youtube.com/watch?v=vJtHOiPqlvY",
+    67: "https://www.youtube.com/shorts/mkoOAwm31s0",
+    68: "https://www.youtube.com/watch?v=TXdQxGRLu_Y",
+    69: "https://www.youtube.com/watch?v=jZ_o_QcMds0",
+    70: "https://www.youtube.com/watch?v=HE6iGbyezug",
+    71: "https://www.youtube.com/watch?v=xeOv8cZMg2I",
+    72: "https://www.youtube.com/watch?v=Xj0GbvMiRos",
+    73: "https://www.youtube.com/watch?v=KjioHP3yTO0",
+    74: "https://www.youtube.com/watch?v=IO6AeSPfJ0Y",
+    75: "https://www.youtube.com/watch?v=W9ndHRcq--c",
+    76: "https://www.youtube.com/watch?v=5VLV3VpDLxQ",
+    77: "https://www.youtube.com/watch?v=fJdZpi5lXb0",
+    78: "https://www.youtube.com/watch?v=13YhMW5qdOI&t=20s",
+    79: "https://www.youtube.com/watch?v=mhSGJXuD14M",
+    80: "https://www.youtube.com/watch?v=13YhMW5qdOI",
+    81: "https://www.youtube.com/watch?v=gqrBngRMEPg",
+    82: "https://www.youtube.com/watch?v=du9q1BldDHU",
+    83: "https://www.youtube.com/watch?v=XMxxFtHv-CM",
+    84: "https://www.youtube.com/watch?v=xmj4VzjNo6s",
+    85: "https://www.youtube.com/watch?v=tqpwhtw54mQ",
+    86: "https://www.youtube.com/watch?v=gINtoExVsy0",
+    87: "https://www.youtube.com/watch?v=ub5OMRzd3j4",
+    88: "https://www.youtube.com/watch?v=W9wWVY7aCuk",
+    89: "https://www.youtube.com/watch?v=MZNbFp7Qd9c",
+    90: "https://www.youtube.com/watch?v=8epUyIsYERc",
+    91: "https://www.youtube.com/watch?v=AlK2Gl6kHZI",
+    92: "https://www.youtube.com/watch?v=0bjJPOA18eo",
+    93: "https://www.youtube.com/watch?v=-kbf5FixN28",
+    94: "https://www.youtube.com/watch?v=chnArCaEpqA",
+    95: "https://www.youtube.com/watch?v=4meB2PHUnsE",
+    96: "https://www.youtube.com/watch?v=mn8rlhOV5Gg",
+    97: "https://www.youtube.com/watch?v=Biib6YbJ6UQ",
+    98: "https://www.youtube.com/watch?v=QyA1QLf1wkg",
+    99: "https://www.youtube.com/watch?v=cDz2glT5JLA",
+    100: "https://www.youtube.com/watch?v=D_akA8d_SoA",
+    101: "https://www.youtube.com/watch?v=8HycHjpapTY",
+    102: "https://www.youtube.com/watch?v=rFCUUXAqOlM",
+    103: "https://www.youtube.com/watch?v=RpKlyK6jU-U",
+    104: "https://www.youtube.com/watch?v=vWb4uQDFnLY",
+    105: "https://www.youtube.com/watch?v=kK1JtK16IvQ",
+    129: "https://www.youtube.com/watch?v=-PHTqnbW3_k",
+}
+
+conn = psycopg2.connect(DB_URL)
+cur = conn.cursor()
+
+success = 0
+for rid, url in MAPPING.items():
+    cur.execute("UPDATE recipes SET youtube_url=%s WHERE id=%s", (url, rid))
+    success += 1
+
+conn.commit()
+
+cur.execute("SELECT count(*) FROM recipes WHERE youtube_url IS NOT NULL")
+total = cur.fetchone()[0]
+
+print(f"완료: {success}개 업데이트")
+print(f"YouTube URL 있는 레시피: {total}개")
+
+conn.close()

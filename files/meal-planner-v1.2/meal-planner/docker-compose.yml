@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL 데이터베이스 ──
+  db:
+    image: postgres:16-alpine
+    container_name: meal-planner-db
+    environment:
+      POSTGRES_DB: meal_planner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: Asia/Seoul
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d meal_planner"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ── FastAPI 백엔드 ──
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: meal-planner-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/meal_planner
+      JWT_SECRET_KEY: meal-planner-secret-change-this-in-production
+      TZ: Asia/Seoul
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "
+        echo '⏳ DB 연결 대기...' &&
+        sleep 2 &&
+        echo '🚀 서버 시작' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local

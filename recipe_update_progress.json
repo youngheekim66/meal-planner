@@ -1,0 +1,470 @@
+{
+  "completed": [],
+  "failed": [
+    {
+      "id": 1,
+      "title": "달걀죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 2,
+      "title": "토스트 + 우유",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 3,
+      "title": "콩나물국밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 4,
+      "title": "계란후라이 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 5,
+      "title": "시금치 된장국 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 6,
+      "title": "누룽지",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 7,
+      "title": "김치찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 8,
+      "title": "된장찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 9,
+      "title": "소고기 미역국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 10,
+      "title": "제육볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 11,
+      "title": "닭볶음탕",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 12,
+      "title": "고등어 구이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 13,
+      "title": "갈치 조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 14,
+      "title": "두부 조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 15,
+      "title": "오징어볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 16,
+      "title": "비빔밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 17,
+      "title": "불고기",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 18,
+      "title": "잡채",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 19,
+      "title": "콩나물국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 20,
+      "title": "감자조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 21,
+      "title": "애호박 된장찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 22,
+      "title": "라면 + 달걀",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 23,
+      "title": "떡볶이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 24,
+      "title": "김치볶음밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 25,
+      "title": "달걀말이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 26,
+      "title": "새우볶음밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 27,
+      "title": "소고기 무국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 28,
+      "title": "호박죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 29,
+      "title": "김치죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 30,
+      "title": "미역국 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 31,
+      "title": "감자수프",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 32,
+      "title": "순두부찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 33,
+      "title": "북어국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 34,
+      "title": "동태찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 35,
+      "title": "참치김치찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 36,
+      "title": "미역국(소고기)",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 37,
+      "title": "시금치나물",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 38,
+      "title": "멸치볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 39,
+      "title": "가지나물",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 40,
+      "title": "소고기장조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 41,
+      "title": "김치전",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 42,
+      "title": "해물파전",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 43,
+      "title": "감자탕",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 44,
+      "title": "닭가슴살 샐러드",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 45,
+      "title": "콩나물 무침",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 46,
+      "title": "떡국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 47,
+      "title": "만두국",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 48,
+      "title": "수제비",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 49,
+      "title": "칼국수",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 50,
+      "title": "우동",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 51,
+      "title": "된장국(시래기)",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 52,
+      "title": "꽁치김치찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 53,
+      "title": "도토리묵 무침",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 54,
+      "title": "호박잎 쌈밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 55,
+      "title": "깻잎찜",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 56,
+      "title": "부대찌개",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 57,
+      "title": "브로콜리 소고기볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 58,
+      "title": "고사리나물 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 59,
+      "title": "참치김밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 60,
+      "title": "계란덮밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 61,
+      "title": "참치마요덮밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 62,
+      "title": "게맛살 볶음밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 63,
+      "title": "소시지야채볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 64,
+      "title": "볶음우동",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 65,
+      "title": "햄야채죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 66,
+      "title": "닭가슴살 볶음밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 67,
+      "title": "김치볶음 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 68,
+      "title": "미나리무침 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 69,
+      "title": "도라지나물 + 밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 70,
+      "title": "두부김치",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 71,
+      "title": "고구마죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 72,
+      "title": "현미밥 + 달걀프라이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 73,
+      "title": "단호박수프",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 74,
+      "title": "전복죽",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 75,
+      "title": "베이컨 토스트",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 76,
+      "title": "삼치 구이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 77,
+      "title": "코다리조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 78,
+      "title": "꽃게탕",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 79,
+      "title": "바지락칼국수",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 80,
+      "title": "어묵탕",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 81,
+      "title": "닭날개조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 82,
+      "title": "닭가슴살 덮밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 83,
+      "title": "삼계탕(간편)",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 84,
+      "title": "연근조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 85,
+      "title": "우엉조림",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 86,
+      "title": "고구마줄기볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 87,
+      "title": "청경채볶음",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 88,
+      "title": "볶음밥(베이컨)",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 89,
+      "title": "치즈떡볶이",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 90,
+      "title": "메밀국수",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 91,
+      "title": "오므라이스",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 92,
+      "title": "소시지 김밥",
+      "reason": "Claude API 실패"
+    },
+    {
+      "id": 93,
+      "title": "어묵볶음",
+      "reason": "Claude API 실패"
+    }
+  ]
+}

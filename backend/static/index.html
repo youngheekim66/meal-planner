@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>식단 플래너</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root { --primary: #2E7D32; --primary-light: #4CAF50; --primary-bg: #E8F5E9; --accent: #FF8F00; --bg: #F5F5F0; --surface: #FFFFFF; --text: #1A1A1A; --text2: #666; --text3: #999; --divider: #E8E8E4; --danger: #E53935; --kakao: #FEE500; --kakao-text: #191919; --radius: 14px; --shadow: 0 2px 12px rgba(0,0,0,0.08); --nav-height: 64px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: var(--primary); color: white; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header h1 { font-size: 18px; font-weight: 700; }
+.header .user-info { font-size: 13px; opacity: 0.9; }
+.header .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-height); background: white; display: flex; box-shadow: 0 -2px 12px rgba(0,0,0,0.1); z-index: 100; }
+.nav-item { flex: 1; padding: 8px 0; text-align: center; cursor: pointer; color: var(--text3); font-size: 11px; transition: 0.2s; border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.nav-item.active { color: var(--primary); }
+.nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
+.app-content { padding-top: 72px; padding-bottom: calc(var(--nav-height) + 20px); }
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+.login-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #43A047 100%); }
+.login-card { background: white; border-radius: 20px; padding: 40px 28px; width: 100%; max-width: 360px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
+.login-card h2 { text-align: center; font-size: 24px; margin-bottom: 8px; color: var(--primary); }
+.login-card .subtitle { text-align: center; color: var(--text2); font-size: 14px; margin-bottom: 28px; }
+.login-logo { text-align: center; font-size: 48px; margin-bottom: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text2); }
+.form-group input { width: 100%; padding: 12px 14px; border: 2px solid var(--divider); border-radius: 10px; font-size: 15px; font-family: inherit; transition: border-color 0.2s; outline: none; }
+.form-group input:focus { border-color: var(--primary); }
+.btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: 0.2s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:active { background: #1B5E20; transform: scale(0.98); }
+.btn-secondary { background: var(--primary-bg); color: var(--primary); margin-top: 10px; }
+.btn-kakao { background: var(--kakao); color: var(--kakao-text); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; font-size: 16px; font-weight: 700; }
+.btn-kakao:active { background: #E5CD00; transform: scale(0.98); }
+.btn-kakao svg { width: 20px; height: 20px; }
+.divider-text { display: flex; align-items: center; margin: 20px 0; color: var(--text3); font-size: 13px; }
+.divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
+.divider-text span { padding: 0 12px; }
+.error-msg { color: var(--danger); font-size: 13px; text-align: center; margin-top: 12px; min-height: 20px; }
+.card { background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.menu-header h2 { font-size: 18px; font-weight: 700; }
+.generate-btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
+.generate-btn:active { transform: scale(0.96); }
+.day-section { margin-bottom: 20px; }
+.day-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid var(--primary-bg); }
+.meal-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--divider); cursor: pointer; transition: background 0.15s; border-radius: 6px; margin: 0 -4px; }
+.meal-item:last-child { border-bottom: none; }
+.meal-item:active { background: var(--primary-bg); }
+.meal-type { font-size: 11px; font-weight: 600; color: white; padding: 3px 8px; border-radius: 6px; min-width: 36px; text-align: center; flex-shrink: 0; }
+.meal-type.breakfast { background: #FF8F00; }
+.meal-type.lunch { background: #1976D2; }
+.meal-type.dinner { background: #7B1FA2; }
+.meal-name { flex: 1; margin-left: 10px; font-size: 14px; }
+.meal-kcal { font-size: 13px; color: var(--text2); font-weight: 500; }
+.meal-arrow { color: var(--text3); font-size: 16px; margin-left: 6px; }
+.day-total { text-align: right; font-size: 13px; font-weight: 600; color: var(--primary); margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--divider); }
+.shopping-category { margin-bottom: 16px; }
+.shopping-category-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.shopping-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--divider); font-size: 14px; }
+.shopping-item:last-child { border-bottom: none; }
+.recipe-item { display: flex; align-items: center; padding: 12px; background: white; border-radius: var(--radius); margin-bottom: 8px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s; }
+.recipe-item:active { transform: scale(0.98); }
+.recipe-emoji { font-size: 28px; margin-right: 12px; }
+.recipe-info { flex: 1; }
+.recipe-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.recipe-info p { font-size: 12px; color: var(--text2); }
+.recipe-kcal-badge { background: var(--primary-bg); color: var(--primary); font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 8px; }
+.recipe-yt-badge { font-size: 10px; color: #FF0000; margin-left: 6px; font-weight: 700; }
+.profile-card { text-align: center; padding: 24px; }
+.profile-avatar { width: 72px; height: 72px; background: var(--primary-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; }
+.profile-name { font-size: 20px; font-weight: 700; }
+.profile-email { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.profile-stats { display: flex; justify-content: center; gap: 24px; margin-top: 20px; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 20px; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 11px; color: var(--text2); }
+.profile-login-type { margin-top: 12px; font-size: 12px; color: var(--text3); }
+.week-selector { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
+.week-selector button { background: var(--primary-bg); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; color: var(--primary); }
+.week-selector span { font-size: 14px; font-weight: 600; }
+.loading { text-align: center; padding: 40px; color: var(--text3); }
+.loading::before { content: '\23F3'; display: block; font-size: 32px; margin-bottom: 8px; animation: pulse 1s ease infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.empty { text-align: center; padding: 48px 20px; color: var(--text3); }
+.empty .icon { font-size: 48px; margin-bottom: 12px; }
+.empty p { font-size: 14px; line-height: 1.6; }
+.search-box { width: 100%; padding: 10px 14px; border: 2px solid var(--divider); border-radius: 10px; font-size: 14px; font-family: inherit; margin-bottom: 12px; outline: none; }
+.search-box:focus { border-color: var(--primary); }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 12px 24px; border-radius: 10px; font-size: 14px; z-index: 1000; transition: transform 0.3s; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Recipe Detail Modal */
+.recipe-detail-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+.recipe-detail-overlay.show { display: flex; }
+.recipe-detail { background: white; width: 100%; max-width: 500px; max-height: 85vh; border-radius: 20px 20px 0 0; overflow-y: auto; padding: 24px 20px; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.detail-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
+.detail-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #999; padding: 0 0 0 12px; line-height: 1; }
+.detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.detail-tag { background: #E8F5E9; color: #2E7D32; font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: 500; }
+.detail-meta { display: flex; gap: 16px; margin-bottom: 20px; font-size: 13px; color: #666; }
+.detail-section { margin-bottom: 20px; }
+.detail-section-title { font-size: 15px; font-weight: 700; color: #2E7D32; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #E8F5E9; }
+.nutrition-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.nutrition-item { text-align: center; background: #F5F5F0; border-radius: 12px; padding: 12px 8px; }
+.nutrition-value { font-size: 18px; font-weight: 700; color: #2E7D32; }
+.nutrition-label { font-size: 11px; color: #666; margin-top: 2px; }
+.step-item { display: flex; gap: 12px; margin-bottom: 12px; }
+.step-num { width: 28px; height: 28px; background: #2E7D32; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.step-text { font-size: 14px; line-height: 1.6; color: #333; }
+.youtube-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: #FF0000; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; text-decoration: none; margin-top: 8px; }
+.youtube-btn:active { opacity: 0.9; transform: scale(0.98); }
+.youtube-btn svg { width: 24px; height: 24px; fill: white; }
+
+/* Weather Display */
+.weather-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+.weather-bar.rain { background: linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%); }
+.weather-bar.snow { background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%); }
+.weather-bar.hot { background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); }
+.weather-bar.cold { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); }
+.weather-icon { font-size: 22px; }
+.weather-temp { font-weight: 700; color: #1565C0; }
+.weather-desc { color: #555; }
+.weather-hint { font-size: 11px; color: #E65100; font-weight: 600; margin-left: auto; }
+.weather-bar.rain .weather-hint { color: #283593; }
+.weather-bar.snow .weather-hint { color: #6A1B9A; }
+
+/* Weather Display */
+.weather-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+.weather-bar.rain { background: linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%); }
+.weather-bar.snow { background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%); }
+.weather-bar.hot { background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); }
+.weather-bar.cold { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); }
+.weather-icon { font-size: 22px; }
+.weather-temp { font-weight: 700; color: #1565C0; }
+.weather-desc { color: #555; }
+.weather-hint { font-size: 11px; color: #E65100; font-weight: 600; margin-left: auto; }
+.weather-bar.rain .weather-hint { color: #283593; }
+.weather-bar.snow .weather-hint { color: #6A1B9A; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-page" style="display:flex">
+  <div class="login-card">
+    <div class="login-logo">🍽️</div>
+    <h2>식단 플래너</h2>
+    <p class="subtitle">건강한 한 주를 계획하세요</p>
+    <button class="btn btn-kakao" onclick="doKakaoLogin()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.74 4.93 4.36 6.24-.14.53-.9 3.4-.93 3.63 0 0-.02.17.09.24.11.06.24.01.24.01.32-.04 3.7-2.44 4.28-2.86.63.09 1.28.14 1.96.14 5.52 0 10-3.36 10-7.44C22 6.36 17.52 3 12 3z"/></svg>
+      카카오 로그인
+    </button>
+    <div class="divider-text"><span>또는</span></div>
+    <div id="loginForm">
+      <div class="form-group"><label>이메일</label><input type="email" id="loginEmail" placeholder="이메일 입력"></div>
+      <div class="form-group"><label>비밀번호</label><input type="password" id="loginPassword" placeholder="비밀번호 입력"></div>
+      <button class="btn btn-primary" onclick="doLogin()">이메일 로그인</button>
+      <button class="btn btn-secondary" onclick="showSignup()">회원가입</button>
+      <div id="loginError" class="error-msg"></div>
+    </div>
+    <div id="signupForm" style="display:none">
+      <div class="form-group"><label>이름</label><input type="text" id="signupName" placeholder="이름 입력"></div>
+      <div class="form-group"><label>이메일</label><input type="email" id="signupEmail" placeholder="이메일 입력"></div>
+      <div class="form-group"><label>비밀번호</label><input type="password" id="signupPassword" placeholder="비밀번호 입력"></div>
+      <button class="btn btn-primary" onclick="doSignup()">가입하기</button>
+      <button class="btn btn-secondary" onclick="showLogin()">← 로그인으로</button>
+      <div id="signupError" class="error-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none">
+  <div class="header">
+    <div><h1>🍽️ 식단 플래너</h1><div class="user-info" id="headerUserInfo"></div></div>
+    <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+  </div>
+  <div class="app-content">
+    <div id="pageMenu" class="page active">
+      <div class="menu-header"><h2>📅 주간 식단</h2><button class="generate-btn" onclick="generateMenu()">🔄 새 식단</button></div>
+      <div class="week-selector"><button onclick="changeWeek(-1)">◀</button><span id="weekLabel"></span><button onclick="changeWeek(1)">▶</button></div>
+      <div id="menuContent"><div class="empty"><div class="icon">📋</div><p>아직 식단이 없습니다<br>새 식단 생성을 눌러주세요</p></div></div>
+    </div>
+    <div id="pageShopping" class="page">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px">🛒 장보기 목록</h2>
+      <div id="shoppingContent"><div class="empty"><div class="icon">🛒</div><p>식단을 먼저 생성하면<br>장보기 목록이 나옵니다</p></div></div>
+    </div>
+    <div id="pageRecipes" class="page">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:12px">📖 레시피</h2>
+      <input type="text" class="search-box" placeholder="🔍 레시피 검색..." oninput="filterRecipes(this.value)">
+      <div id="recipeList"></div>
+    </div>
+    <div id="pageProfile" class="page">
+      <div class="card profile-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name" id="profileName"></div>
+        <div class="profile-email" id="profileEmail"></div>
+        <div class="profile-login-type" id="profileLoginType"></div>
+        <div class="profile-stats">
+          <div class="stat-item"><div class="stat-value" id="statKcal">1800</div><div class="stat-label">목표 칼로리</div></div>
+          <div class="stat-item"><div class="stat-value" id="statRecipes">0</div><div class="stat-label">전체 레시피</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px"><div style="font-size:14px;color:var(--text2);text-align:center"><p>🌐 식단 플래너 v1.4.0</p><p style="margin-top:4px;font-size:12px">meal-planner-production-81ed.up.railway.app</p></div></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-item active" data-page="Menu" onclick="switchPage('Menu', this)"><span class="icon">📅</span>식단</button>
+    <button class="nav-item" data-page="Shopping" onclick="switchPage('Shopping', this)"><span class="icon">🛒</span>장보기</button>
+    <button class="nav-item" data-page="Recipes" onclick="switchPage('Recipes', this)"><span class="icon">📖</span>레시피</button>
+    <button class="nav-item" data-page="Profile" onclick="switchPage('Profile', this)"><span class="icon">👤</span>내정보</button>
+  </div>
+</div>
+
+<!-- Recipe Detail Modal -->
+<div id="recipeDetailOverlay" class="recipe-detail-overlay" onclick="closeRecipeDetail(event)">
+  <div class="recipe-detail" onclick="event.stopPropagation()">
+    <div id="recipeDetailContent"></div>
+  </div>
+</div>
+
+<script>
+var API = 'https://meal-planner-production-81ed.up.railway.app';
+var token = localStorage.getItem('token');
+var user = JSON.parse(localStorage.getItem('user') || 'null');
+var currentMenuId = null;
+var allRecipes = [];
+var weekOffset = 0;
+var weeklyWeather = {};
+var weeklyWeather = {};
+
+(function handleKakaoCallback() {
+  var params = new URLSearchParams(window.location.search);
+  var kakaoToken = params.get('token');
+  var userId = params.get('user_id');
+  var userName = params.get('user_name');
+  var userKcal = params.get('user_kcal');
+  var error = params.get('error');
+  if (error) { alert('카카오 로그인 실패: ' + error); window.history.replaceState({}, '', window.location.pathname); return; }
+  if (kakaoToken && userId && userName) {
+    token = kakaoToken;
+    user = { id: parseInt(userId), name: decodeURIComponent(userName), kcal_target: parseInt(userKcal) || 1800, login_type: 'kakao' };
+    localStorage.setItem('token', token); localStorage.setItem('user', JSON.stringify(user));
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
+
+if (token && user) { showApp(); } else { document.getElementById('loginPage').style.display = 'flex'; }
+
+function doKakaoLogin() { window.location.href = API + '/api/auth/kakao/login'; }
+function showLogin() { document.getElementById('loginForm').style.display = 'block'; document.getElementById('signupForm').style.display = 'none'; }
+function showSignup() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('signupForm').style.display = 'block'; }
+
+async function doLogin() {
+  var email = document.getElementById('loginEmail').value, pw = document.getElementById('loginPassword').value;
+  var errEl = document.getElementById('loginError'); errEl.textContent = '';
+  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력하세요'; return; }
+  try {
+    var res = await fetch(API + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw }) });
+    var data = await res.json(); if (!res.ok) { errEl.textContent = data.detail || '로그인 실패'; return; }
+    token = data.access_token; user = data.user; user.login_type = 'email';
+    localStorage.setItem('token', token); localStorage.setItem('user', JSON.stringify(user)); showApp();
+  } catch (e) { errEl.textContent = '서버 연결 실패'; }
+}
+
+async function doSignup() {
+  var name = document.getElementById('signupName').value, email = document.getElementById('signupEmail').value, pw = document.getElementById('signupPassword').value;
+  var errEl = document.getElementById('signupError'); errEl.textContent = '';
+  if (!name || !email || !pw) { errEl.textContent = '모든 항목을 입력하세요'; return; }
+  try {
+    var res = await fetch(API + '/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw, name: name }) });
+    var data = await res.json(); if (!res.ok) { errEl.textContent = data.detail || '가입 실패'; return; }
+    token = data.access_token; user = data.user; user.login_type = 'email';
+    localStorage.setItem('token', token); localStorage.setItem('user', JSON.stringify(user)); showApp(); showToast('가입 완료!');
+  } catch (e) { errEl.textContent = '서버 연결 실패'; }
+}
+
+function doLogout() { token = null; user = null; localStorage.removeItem('token'); localStorage.removeItem('user'); document.getElementById('mainApp').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; }
+
+function showApp() {
+  document.getElementById('loginPage').style.display = 'none'; document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('headerUserInfo').textContent = user.name + '님 (' + user.kcal_target + 'kcal)';
+  document.getElementById('profileName').textContent = user.name; document.getElementById('profileEmail').textContent = '';
+  document.getElementById('statKcal').textContent = user.kcal_target;
+  var lte = document.getElementById('profileLoginType');
+  lte.textContent = user.login_type === 'kakao' ? '💬 카카오 계정으로 로그인' : '📧 이메일 로그인';
+  updateWeekLabel(); loadRecipes();
+}
+
+function switchPage(name, btn) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  if (name === 'Shopping' && currentMenuId) loadShopping();
+}
+
+function getWeekStart() { var d = new Date(); d.setDate(d.getDate() - d.getDay() + 1 + (weekOffset * 7)); return d.toISOString().split('T')[0]; }
+function updateWeekLabel() { var ws = getWeekStart(); var d = new Date(ws); var end = new Date(d); end.setDate(end.getDate() + 6); document.getElementById('weekLabel').textContent = (d.getMonth()+1) + '/' + d.getDate() + ' ~ ' + (end.getMonth()+1) + '/' + end.getDate(); }
+function changeWeek(dir) { weekOffset += dir; updateWeekLabel(); }
+
+async function generateMenu() {
+  var content = document.getElementById('menuContent');
+  content.innerHTML = '<div class="loading">날씨를 확인하고 식단을 생성 중...</div>';
+  try {
+    // 날씨 데이터 먼저 로드
+    await loadWeather();
+    var res = await fetch(API + '/api/menu/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, week_start: getWeekStart() }) });
+    var data = await res.json(); if (!res.ok) throw new Error(data.detail || 'Error');
+    currentMenuId = data.id; renderMenu(data); showToast('날씨 맞춤 식단이 생성되었습니다! 🌤️');
+  } catch (e) { content.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>식단 생성 실패<br>' + e.message + '</p></div>'; }
+}
+
+function renderMenu(data) {
+  var content = document.getElementById('menuContent');
+  var days = {};
+  data.items.forEach(function(item) { if (!days[item.date]) days[item.date] = []; days[item.date].push(item); });
+  var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+  var mealTypes = { BREAKFAST: '아침', LUNCH: '점심', DINNER: '저녁' };
+  var mealClass = { BREAKFAST: 'breakfast', LUNCH: 'lunch', DINNER: 'dinner' };
+  var dailySummary = {};
+  if (data.daily_summary) { data.daily_summary.forEach(function(d) { dailySummary[d.date] = d.total_kcal; }); }
+  var html = '';
+  Object.keys(days).sort().forEach(function(date) {
+    var d = new Date(date + 'T00:00:00');
+    var dayName = dayNames[d.getDay()];
+    var dateStr = (d.getMonth()+1) + '/' + d.getDate() + '(' + dayName + ')';
+    var totalKcal = dailySummary[date] || days[date].reduce(function(s, i) { return s + (i.kcal_est || 0); }, 0);
+    var weatherBar = getWeatherBar(date);
+    html += '<div class="day-section"><div class="day-title">' + dateStr + '</div>' + weatherBar + '<div class="card">';
+    days[date].forEach(function(item) {
+      var recipeId = item.recipe ? (item.recipe.id || item.recipe_id) : item.recipe_id;
+      html += '<div class="meal-item" onclick="showRecipeDetail(' + recipeId + ')">' +
+        '<span class="meal-type ' + mealClass[item.meal_type] + '">' + mealTypes[item.meal_type] + '</span>' +
+        '<span class="meal-name">' + item.recipe.title + '</span>' +
+        '<span class="meal-kcal">' + Math.round(item.kcal_est) + 'kcal</span>' +
+        '<span class="meal-arrow">›</span></div>';
+    });
+    html += '<div class="day-total">합계: ' + Math.round(totalKcal) + ' kcal</div></div></div>';
+  });
+  var weekTotal = Math.round(data.total_kcal || 0);
+  html += '<div class="card" style="text-align:center;margin-top:8px"><div style="font-size:14px;font-weight:600;color:var(--primary)">주간 총 ' + weekTotal.toLocaleString() + ' kcal · 일 평균 ' + Math.round(weekTotal / 7) + ' kcal</div></div>';
+  content.innerHTML = html;
+}
+
+async function loadShopping() {
+  if (!currentMenuId) return;
+  var content = document.getElementById('shoppingContent');
+  content.innerHTML = '<div class="loading">장보기 목록을 불러오는 중...</div>';
+  try {
+    var res = await fetch(API + '/api/menu/' + currentMenuId + '/shopping-list');
+    var data = await res.json(); if (!res.ok) throw new Error('Error'); renderShopping(data);
+  } catch (e) { content.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>불러오기 실패</p></div>'; }
+}
+
+function renderShopping(data) {
+  var content = document.getElementById('shoppingContent');
+  var items = data.items || data;
+  if (!items || items.length === 0) { content.innerHTML = '<div class="empty"><div class="icon">✅</div><p>장보기 목록이 비어있습니다</p></div>'; return; }
+  var categories = {};
+  items.forEach(function(item) { var cat = item.category || '기타'; if (!categories[cat]) categories[cat] = []; categories[cat].push(item); });
+  var html = '';
+  Object.keys(categories).sort().forEach(function(cat) {
+    html += '<div class="shopping-category"><div class="shopping-category-title">' + cat + '</div><div class="card">';
+    categories[cat].forEach(function(item) {
+      var qty = item.total_qty ? (Math.round(item.total_qty * 10) / 10) + (item.unit || '') : '';
+      html += '<div class="shopping-item"><span>' + (item.name || item.ingredient_name) + '</span><span>' + qty + '</span></div>';
+    });
+    html += '</div></div>';
+  });
+  content.innerHTML = html;
+}
+
+var emojiMap = { '죽':'🥣','국':'🍲','찌개':'🫕','볶음':'🍳','조림':'🍖','찜':'🫕','면류':'🍜','밥':'🍚','간편식':'🥪','반찬':'🥗','나물':'🥬','쌈':'🥬','구이':'🥩','전':'🥞','덮밥':'🍛','탕':'🍲','김밥':'🍙','분식':'🍢','수프':'🍲','무침':'🥗','샐러드':'🥗','떡볶이':'🍢','볶음밥':'🍳','토스트':'🍞' };
+function getRecipeEmoji(r) { if (r.tags) { for (var i = 0; i < r.tags.length; i++) { if (emojiMap[r.tags[i]]) return emojiMap[r.tags[i]]; } } return '🍽️'; }
+
+async function loadRecipes() {
+  try {
+    var res = await fetch(API + '/api/recipes/?limit=200'); allRecipes = await res.json();
+    document.getElementById('statRecipes').textContent = allRecipes.length; renderRecipes(allRecipes);
+  } catch (e) { document.getElementById('recipeList').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>레시피를 불러올 수 없습니다</p></div>'; }
+}
+
+function renderRecipes(recipes) {
+  var container = document.getElementById('recipeList');
+  var html = '';
+  recipes.forEach(function(r) {
+    var emoji = getRecipeEmoji(r);
+    var kcal = r.kcal_per_serving ? Math.round(r.kcal_per_serving) : '-';
+    var cuisine = r.cuisine === 'KOREAN' ? '한식' : '자유';
+    var stars = ''; for (var j = 0; j < (r.difficulty || 1); j++) stars += '⭐';
+    var ytBadge = (r.source_url && r.source_url.indexOf('youtu') >= 0) ? '<span class="recipe-yt-badge">▶YT</span>' : '';
+    html += '<div class="recipe-item" onclick="showRecipeDetail(' + r.id + ')">' +
+      '<span class="recipe-emoji">' + emoji + '</span>' +
+      '<div class="recipe-info"><h3>' + r.title + ytBadge + '</h3><p>' + cuisine + ' · ' + (r.cook_time_min || '?') + '분 · ' + stars + '</p></div>' +
+      '<span class="recipe-kcal-badge">' + kcal + 'kcal</span></div>';
+  });
+  container.innerHTML = html || '<div class="empty"><p>레시피가 없습니다</p></div>';
+}
+
+function filterRecipes(query) {
+  if (!query) { renderRecipes(allRecipes); return; }
+  var q = query.toLowerCase();
+  renderRecipes(allRecipes.filter(function(r) { return r.title.toLowerCase().indexOf(q) >= 0 || (r.tags && r.tags.some(function(t) { return t.indexOf(q) >= 0; })); }));
+}
+
+// ── Recipe Detail Modal ──
+function showRecipeDetail(recipeId) {
+  var recipe = allRecipes.find(function(r) { return r.id === recipeId; });
+  if (!recipe) return;
+
+  var emoji = getRecipeEmoji(recipe);
+  var cuisine = recipe.cuisine === 'KOREAN' ? '한식' : '자유';
+  var stars = ''; for (var j = 0; j < (recipe.difficulty || 1); j++) stars += '⭐';
+
+  var html = '<div class="detail-header"><h2>' + emoji + ' ' + recipe.title + '</h2><button class="detail-close" onclick="closeRecipeDetail()">&times;</button></div>';
+
+  if (recipe.tags && recipe.tags.length > 0) {
+    html += '<div class="detail-tags">'; recipe.tags.forEach(function(tag) { html += '<span class="detail-tag">#' + tag + '</span>'; }); html += '</div>';
+  }
+
+  html += '<div class="detail-meta"><span>' + cuisine + '</span><span>⏱ ' + (recipe.cook_time_min || '?') + '분</span><span>' + stars + '</span><span>👥 ' + (recipe.servings || '?') + '인분</span></div>';
+
+  // Nutrition
+  html += '<div class="detail-section"><div class="detail-section-title">📊 영양정보 (1인분)</div><div class="nutrition-grid">';
+  html += '<div class="nutrition-item"><div class="nutrition-value">' + (recipe.kcal_per_serving ? Math.round(recipe.kcal_per_serving) : '-') + '</div><div class="nutrition-label">kcal</div></div>';
+  if (recipe.macros_per_serving) {
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + (recipe.macros_per_serving.carb || '-') + 'g</div><div class="nutrition-label">탄수화물</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + (recipe.macros_per_serving.protein || '-') + 'g</div><div class="nutrition-label">단백질</div></div>';
+    html += '<div class="nutrition-item"><div class="nutrition-value">' + (recipe.macros_per_serving.fat || '-') + 'g</div><div class="nutrition-label">지방</div></div>';
+  }
+  html += '</div></div>';
+
+  // Steps
+  if (recipe.steps && recipe.steps.length > 0) {
+    html += '<div class="detail-section"><div class="detail-section-title">👨‍🍳 조리단계</div>';
+    recipe.steps.forEach(function(step) { html += '<div class="step-item"><div class="step-num">' + step.step + '</div><div class="step-text">' + step.text + '</div></div>'; });
+    html += '</div>';
+  }
+
+  // YouTube
+  if (recipe.youtube_url && recipe.youtube_url.indexOf('youtu') >= 0) {
+    html += '<div class="detail-section"><a href="' + recipe.youtube_url + '" target="_blank" class="youtube-btn">' +
+      '<svg viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.5.5c-1 .3-1.8 1-2.1 2.1C0 8 0 12 0 12s0 4 .4 5.8c.3 1 1 1.8 2.1 2.1 1.9.5 9.5.5 9.5.5s7.6 0 9.5-.5c1-.3 1.8-1 2-2.1.5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.6 15.6V8.4l6.4 3.6-6.4 3.6z"/></svg>' +
+      '▶ YouTube 원본 영상 보기</a></div>';
+  }
+
+  document.getElementById('recipeDetailContent').innerHTML = html;
+  document.getElementById('recipeDetailOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRecipeDetail(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('recipeDetailOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+
+// ★ 날씨 관련 함수들
+async function loadWeather() {
+  try {
+    var res = await fetch(API + '/api/weather/weekly?week_start=' + getWeekStart());
+    var data = await res.json();
+    weeklyWeather = {};
+    if (data.weather) {
+      data.weather.forEach(function(w) { weeklyWeather[w.date] = w; });
+    }
+  } catch (e) { console.log('날씨 로드 실패:', e); weeklyWeather = {}; }
+}
+
+function getWeatherBar(dateStr) {
+  var w = weeklyWeather[dateStr];
+  if (!w || w.temp_max === null) return '';
+  var cls = 'weather-bar';
+  var code = w.weather_desc || '';
+  if (code.indexOf('비') >= 0 || code.indexOf('소나기') >= 0) cls += ' rain';
+  else if (code.indexOf('눈') >= 0) cls += ' snow';
+  else if (w.temp_max >= 28) cls += ' hot';
+  else if (w.temp_max <= 5) cls += ' cold';
+  var tempStr = Math.round(w.temp_min) + '°/' + Math.round(w.temp_max) + '°';
+  var hint = w.food_hint ? '<span class="weather-hint">' + w.food_hint + '</span>' : '';
+  var precip = w.precipitation_prob > 30 ? ' 💧' + w.precipitation_prob + '%' : '';
+  return '<div class="' + cls + '">' +
+    '<span class="weather-icon">' + w.weather_icon + '</span>' +
+    '<span class="weather-temp">' + tempStr + '</span>' +
+    '<span class="weather-desc">' + w.weather_desc + precip + '</span>' +
+    hint + '</div>';
+}
+
+
+// ★ 날씨 관련 함수들
+async function loadWeather() {
+  try {
+    var res = await fetch(API + '/api/weather/weekly?week_start=' + getWeekStart());
+    var data = await res.json();
+    weeklyWeather = {};
+    if (data.weather) {
+      data.weather.forEach(function(w) { weeklyWeather[w.date] = w; });
+    }
+  } catch (e) { console.log('날씨 로드 실패:', e); weeklyWeather = {}; }
+}
+
+function getWeatherBar(dateStr) {
+  var w = weeklyWeather[dateStr];
+  if (!w || w.temp_max === null) return '';
+  var cls = 'weather-bar';
+  var code = w.weather_desc || '';
+  if (code.indexOf('비') >= 0 || code.indexOf('소나기') >= 0) cls += ' rain';
+  else if (code.indexOf('눈') >= 0) cls += ' snow';
+  else if (w.temp_max >= 28) cls += ' hot';
+  else if (w.temp_max <= 5) cls += ' cold';
+  var tempStr = Math.round(w.temp_min) + '°/' + Math.round(w.temp_max) + '°';
+  var hint = w.food_hint ? '<span class="weather-hint">' + w.food_hint + '</span>' : '';
+  var precip = w.precipitation_prob > 30 ? ' 💧' + w.precipitation_prob + '%' : '';
+  return '<div class="' + cls + '">' +
+    '<span class="weather-icon">' + w.weather_icon + '</span>' +
+    '<span class="weather-temp">' + tempStr + '</span>' +
+    '<span class="weather-desc">' + w.weather_desc + precip + '</span>' +
+    hint + '</div>';
+}
+
+function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2500); }
+</script>
+</body>
+</html>
